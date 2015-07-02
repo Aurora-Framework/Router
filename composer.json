@@ -1,0 +1,23 @@
+{
+   "name": "aurora-framework/router",
+   "description": "Minimal Router",
+   "license": "MIT",
+   "authors": [
+      {
+         "name": "VeeeneX",
+         "email": "veeenex@gmail.com"
+      },
+      {
+         "name": "KotassMan",
+         "email": "kotas.koterba@hotmail.sk"
+      }
+   ],
+   "require": {
+      "php": ">=5.4.0"
+   },
+   "autoload": {
+      "psr-4": {
+         "Aurora\\": "src//"
+      }
+   }
+}
