@@ -8,7 +8,8 @@ include "../vendor/autoload.php";
  */
 $Router = new Aurora\Router("/home");
 
-$Router->post('/', 'HomeController@index');
+$Router->get('/', 'HomeController@index');
+$Router->get('/?{name}', 'HomeController@index');
 
 $Router->addRoute("GET", '/user/{id}/?{name}', 'UserController@show', "getUser", [
    "id" => "([0-9]++)",
@@ -17,9 +18,10 @@ $Router->addRoute("GET", '/user/{id}/?{name}', 'UserController@show', "getUser",
 
 $Router->addRoute("GET", '/user/messages/{id}/?{toId}', 'UserController@show', "getMessage");
 
-$Router->findRoute('GET', '/home/user/1');
 
-
+var_dump($Router->findRoute('GET', '/home/'));
+/*
 $UrlHelper = new UrlHelper($routes);
 $UrlHelper->get("getUser", ["user" => 3]); #/user/3
 $UrlHelper->get("getMessage", ["id" => 3]);
+*/
