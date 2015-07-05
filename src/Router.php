@@ -534,4 +534,14 @@ class Router
 		}
 		return $tree;
 	}
+
+	public function getRawRoutes()
+	{
+		return $this->rawRoutes;
+	}
+
+	public function getMatchTypes()
+	{
+		return $this->matchTypes;
+	}
 }
