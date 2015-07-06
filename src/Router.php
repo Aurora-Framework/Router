@@ -324,12 +324,20 @@ class Router
 				//unset($methods[$i]);
 			}
 		}
+		if ($name === null) {
+			$this->rawRoutes[] = [
+				'route' => $this->baseUri.$route,
+				'method' => $methods,
+				"definitions" => $definitions
+			];
+		} else {
+			$this->rawRoutes[$name] = [
+				'route' => $this->baseUri.$route,
+				'method' => $methods,
+				"definitions" => $definitions
+			];
+		}
 
-		$this->rawRoutes[$name] = [
-			'route' => $this->baseUri.$route,
-			'method' => $methods,
-			"definitions" => $definitions
-		];
 	}
 
 	/**
