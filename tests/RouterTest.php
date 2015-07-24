@@ -1,5 +1,7 @@
 <?php
 
+use Aurora\Router;
+
 class RouterTest extends \PHPUnit_Framework_TestCase
 {
 	protected function setUp()
@@ -11,6 +13,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
    public function testInit()
    {
-		$this->assertInstanceOf('\Aurora\Router', new \Aurora\Router());
+		$this->assertInstanceOf('\Aurora\Router', new Router());
 	}
 }

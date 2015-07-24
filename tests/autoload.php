@@ -1,2 +1,2 @@
 <?php
-	require 'src/Router.php';
+require 'vendor/autoload.php';

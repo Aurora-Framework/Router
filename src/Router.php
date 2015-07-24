@@ -1,20 +1,5 @@
 <?php
 
-/**
- * Aurora - Framework
- *
- * Aurora is fast, simple, extensible Framework
- *
- * @category   Framework
- * @package    Aurora
- * @author     VeeeneX <veeenex@gmail.com>
- * @copyright  2015 Caroon
- * @license    MIT
- * @version    1.0
- * @link       http://caroon.com/Aurora
- *
- */
-
 namespace Aurora;
 
 /**
@@ -126,9 +111,23 @@ class Router
 	 */
 	public function setMatchTypes($matchTypes)
 	{
-		foreach ( (array) $matchTypes as $key => $matchType) {
-			$this->matchTypes[$key] = $matchType;
+		if (is_array($matchTypes)) {
+			$this->matchTypes = $matchTypes;
+		} else {
+			foreach ( (array) $matchTypes as $key => $matchType) {
+				$this->matchTypes[$key] = $matchType;
+			}
 		}
+	}
+
+	/**
+	 * Adds Match types
+	 * @method addMatchTypes
+	 * @param  array        $matchTypes Array of match types
+	 */
+	public function addMatchTypes($matchTypes)
+	{
+		$this->matchTypes = $matchTypes;
 	}
 
 	/**

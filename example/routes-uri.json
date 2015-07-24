@@ -1,0 +1,8 @@
+{
+   "routes": {
+      "/?{user}": [
+         "POST",
+         ["App\\Controller\\User", "view"]
+      ]
+   }
+}
