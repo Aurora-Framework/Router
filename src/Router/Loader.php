@@ -22,11 +22,11 @@ class Loader
       ) ? $this->data["type"] : "uri";
 
       if (isset($this->data["matchTypes"])) {
-         $this->Router->addMatchTypes($this->data["matchTypes"]);
+         $Router->addMatchTypes($this->data["matchTypes"]);
       }
 
       if (isset($this->data["baseUri"])) {
-         $this->baseUri($this->data["baseUri"]);
+         $Router->baseUri($this->data["baseUri"]);
       }
 
       $routes = $this->data["routes"];
