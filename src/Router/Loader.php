@@ -26,7 +26,7 @@ class Loader
       }
 
       if (isset($this->data["baseUri"])) {
-         $Router->baseUri($this->data["baseUri"]);
+         $Router->setBaseUri($this->data["baseUri"]);
       }
 
       $routes = $this->data["routes"];
