@@ -145,8 +145,7 @@ class Router
 	 */
 	public function setBaseUri($baseUri)
 	{
-		$baseUri[0] = '';
-		$this->baseUri = (string) trim($baseUri);
+		$this->baseUri = (string) $baseUri;
 	}
 
 	/**
