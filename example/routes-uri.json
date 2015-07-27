@@ -1,8 +1,14 @@
 {
-   "routes": {
-      "/?{user}": [
-         "POST",
-         ["App\\Controller\\User", "view"]
-      ]
-   }
+    "routes": {
+        "/?{user}": [
+            "POST",
+            ["App\\Controller\\User", "view"]
+        ],
+        "/api": {
+            "/user/add": [
+                "GET",
+                ["App\\Controller\\User", "add"]
+            ]
+        }
+    }
 }

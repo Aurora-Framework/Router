@@ -17,8 +17,8 @@ class Loader
     {
         $Router = new Router();
         $type = (
-        isset($this->data["type"])
-        && ($this->data["type"] === "uri" || $this->data["type"] === "method")
+            isset($this->data["type"])
+            && ($this->data["type"] === "uri" || $this->data["type"] === "method")
         ) ? $this->data["type"] : "uri";
 
         if (isset($this->data["matchTypes"])) {
@@ -31,19 +31,32 @@ class Loader
 
         $routes = $this->data["routes"];
 
-        if ($type) {
-            foreach ($routes as $pattern => $data) {
-                $Router->addRoute($data[0], $pattern, $data[1]);
-            }
+        if ($type === "uri") {
+            $this->parseUriRoute($routes, $Router);
         } else {
-            foreach ($routes as $method => $routesInMethod) {
-                foreach ($routesInMethod as $route) {
-                    $Router->addRoute($method, $route[0], $route[1]);
-                }
-            }
+            $this->parseMethodRoute($routes, $Router);
         }
 
         return $Router;
     }
 
+    protected function parseUriRoute($routes, &$Router, $base = "")
+    {
+        foreach ($routes as $pattern => $data) {
+            if (key($data) === 0) {
+                $Router->addRoute($data[0], $base.$pattern, $data[1]);
+            } else {
+                $this->parseUriRoute($data, $Router, $pattern);
+            }
+        }
+    }
+
+    protected function parseMethodRoute($routes, &$Router)
+    {
+        foreach ($routes as $method => $routesInMethod) {
+            foreach ($routesInMethod as $route) {
+                $Router->addRoute($method, $route[0], $route[1]);
+            }
+        }
+    }
 }

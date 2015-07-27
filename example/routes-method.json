@@ -1,11 +1,11 @@
 {
-   "type": "method",
-   "routes": {
-      "POST": [
-         [
-            "/api/delete/{user}",
-            ["App\\Controller\\User", "delete"]
-         ]
-      ]
-   }
+    "type": "method",
+    "routes": {
+        "POST": [
+            [
+                "/api/delete/{user}",
+                ["App\\Controller\\User", "delete"]
+            ]
+        ]
+    }
 }
