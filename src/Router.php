@@ -23,10 +23,10 @@ namespace Aurora;
  *
 */
 
-use Aurora\Router\Exceptions\InvalidMethodException;
-use Aurora\Router\Exceptions\MethodNotAllowedException;
-use Aurora\Router\Exceptions\RouteNotFoundException;
-use Aurora\Router\Exceptions\MatchTypeNotFoundException;
+use Aurora\Router\Exception\InvalidMethodException;
+use Aurora\Router\Exception\MethodNotAllowedException;
+use Aurora\Router\Exception\RouteNotFoundException;
+use Aurora\Router\Exception\MatchTypeNotFoundException;
 
 class Router
 {
@@ -153,9 +153,9 @@ class Router
 	 * @param  string $pattern  Patter used to match the route
 	 * @param  array|callable $callable Callable for route
 	 */
-	public function get($pattern, $callable)
+	public function get($pattern, $callable, $name = null)
 	{
-		$this->addRoute("GET", $pattern, $callable);
+		$this->addRoute("GET", $pattern, $callable, $name = null);
 	}
 
 	/**
@@ -163,9 +163,9 @@ class Router
 	 * @param  string $pattern  Patter used to match the route
 	 * @param  array|callable $callable Callable for route
 	 */
-	public function post($pattern, $callable)
+	public function post($pattern, $callable, $name = null)
 	{
-		$this->addRoute('POST', $pattern, $callable);
+		$this->addRoute('POST', $pattern, $callable, $name = null);
 	}
 
 	/**
@@ -173,9 +173,9 @@ class Router
 	 * @param  string $pattern  Patter used to match the route
 	 * @param  array|callable $callable Callable for route
 	 */
-	public function patch($pattern, $callable)
+	public function patch($pattern, $callable, $name = null)
 	{
-		$this->addRoute('PATCH', $pattern, $callable);
+		$this->addRoute('PATCH', $pattern, $callable, $name = null);
 	}
 
 	/**
@@ -183,9 +183,9 @@ class Router
 	 * @param  string $pattern  Patter used to match the route
 	 * @param  array|callable $callable Callable for route
 	 */
-	public function delete($pattern, $callable)
+	public function delete($pattern, $callable, $name = null)
 	{
-		$this->addRoute('DELETE', $pattern, $callable);
+		$this->addRoute('DELETE', $pattern, $callable, $name = null);
 	}
 
 	/**
@@ -193,9 +193,9 @@ class Router
 	 * @param  string $pattern  Patter used to match the route
 	 * @param  array|callable $callable Callable for route
 	 */
-	public function put($pattern, $callable)
+	public function put($pattern, $callable, $name = null)
 	{
-		$this->addRoute('PUT', $pattern, $callable);
+		$this->addRoute('PUT', $pattern, $callable, $name = null);
 	}
 
 	/**
@@ -203,9 +203,9 @@ class Router
 	 * @param  string $pattern  Patter used to match the route
 	 * @param  array|callable $callable Callable for route
 	 */
-	public function options($pattern, $callable)
+	public function options($pattern, $callable, $name = null)
 	{
-		$this->addRoute('OPTIONS', $pattern, $callable);
+		$this->addRoute('OPTIONS', $pattern, $callable, $name = null);
 	}
 
 	/**
@@ -213,9 +213,9 @@ class Router
 	 * @param  string $pattern  Patter used to match the route
 	 * @param  array|callable $callable Callable for route
 	 */
-	public function any($pattern, $callable)
+	public function any($pattern, $callable, $name = null)
 	{
-		$this->addRoute('ANY', $pattern, $callable);
+		$this->addRoute('ANY', $pattern, $callable, $name = null);
 	}
 
 	/**
@@ -319,7 +319,6 @@ class Router
 					throw new InvalidMethodException('Method: ' . $methods[$i] . ' is not valid');
 				}
 				$methods[$methods[$i]] = $action;
-				//unset($methods[$i]);
 			}
 		}
 		if ($name === null) {

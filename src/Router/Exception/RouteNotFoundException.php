@@ -1,6 +1,6 @@
 <?php
 
-namespace Aurora\Router\Exceptions;
+namespace Aurora\Router\Exception;
 
 use Exception;
 
