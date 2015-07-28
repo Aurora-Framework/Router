@@ -44,7 +44,11 @@ class Loader
     {
         foreach ($routes as $pattern => $data) {
             if (key($data) === 0) {
-                $Router->addRoute($data[0], $base.$pattern, $data[1]);
+                $name = null;
+                if (isset($data[2])) {
+                    $name = $data[2];
+                }
+                $Router->addRoute($data[0], $base.$pattern, $data[1], $name);
             } else {
                 $this->parseUriRoute($data, $Router, $pattern);
             }
@@ -55,10 +59,6 @@ class Loader
     {
         foreach ($routes as $method => $routesInMethod) {
             foreach ($routesInMethod as $route) {
-                $name = null;
-                if (isset($route[2])) {
-                    $name = $route[2];
-                }
                 $Router->addRoute($method, $route[0], $route[1], $name);
             }
         }
