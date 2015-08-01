@@ -155,7 +155,7 @@ class Router
 	 */
 	public function get($pattern, $callable, $name = null)
 	{
-		$this->addRoute("GET", $pattern, $callable, $name = null);
+		$this->addRoute("GET", $pattern, $callable, $name);
 	}
 
 	/**
@@ -165,7 +165,7 @@ class Router
 	 */
 	public function post($pattern, $callable, $name = null)
 	{
-		$this->addRoute('POST', $pattern, $callable, $name = null);
+		$this->addRoute('POST', $pattern, $callable, $name);
 	}
 
 	/**
@@ -175,7 +175,7 @@ class Router
 	 */
 	public function patch($pattern, $callable, $name = null)
 	{
-		$this->addRoute('PATCH', $pattern, $callable, $name = null);
+		$this->addRoute('PATCH', $pattern, $callable, $name);
 	}
 
 	/**
@@ -185,7 +185,7 @@ class Router
 	 */
 	public function delete($pattern, $callable, $name = null)
 	{
-		$this->addRoute('DELETE', $pattern, $callable, $name = null);
+		$this->addRoute('DELETE', $pattern, $callable, $name);
 	}
 
 	/**
@@ -195,7 +195,7 @@ class Router
 	 */
 	public function put($pattern, $callable, $name = null)
 	{
-		$this->addRoute('PUT', $pattern, $callable, $name = null);
+		$this->addRoute('PUT', $pattern, $callable, $name);
 	}
 
 	/**
@@ -205,7 +205,7 @@ class Router
 	 */
 	public function options($pattern, $callable, $name = null)
 	{
-		$this->addRoute('OPTIONS', $pattern, $callable, $name = null);
+		$this->addRoute('OPTIONS', $pattern, $callable, $name);
 	}
 
 	/**
@@ -215,7 +215,7 @@ class Router
 	 */
 	public function any($pattern, $callable, $name = null)
 	{
-		$this->addRoute('ANY', $pattern, $callable, $name = null);
+		$this->addRoute('ANY', $pattern, $callable, $name);
 	}
 
 	/**
