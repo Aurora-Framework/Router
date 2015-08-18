@@ -6,8 +6,6 @@ use Aurora\Helper\DataObject;
 
 class Route extends DataObject
 {
-    public $namespace;
-
     public function where(array $definitions = [])
     {
         $this->definitions = $definitions;
