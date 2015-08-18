@@ -232,14 +232,14 @@ class Router
 	public function mount($baseroute, $callable, $extra = [])
 	{
 		$Route = clone $this->Route;
-		$this->Route->setExtra($extra);
+		$this->Route->addExtra($extra);
 		// Track current baseroute
 		$curBaseroute = $this->baseUri;
 
 		$this->baseUri .= $baseroute;
 
 		// Call the callable
-		call_user_func($callable);
+		$callable($this);
 		$this->Route = $Route;
 
 		// Restore original baseroute
