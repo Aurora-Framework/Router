@@ -11,14 +11,12 @@ class Route extends DataObject
     public function where(array $definitions = [])
     {
         $this->definitions = $definitions;
-
         return $this;
     }
 
     protected function setName($name)
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -30,12 +28,12 @@ class Route extends DataObject
     public function setNamespace($namespace)
     {
         $this->namespace = $namespace;
-
         return $this;
     }
 
     public function addExtra(array $extra)
     {
         $this->replace($extra);
+        return $this;
     }
 }

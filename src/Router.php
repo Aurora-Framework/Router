@@ -229,19 +229,21 @@ class Router
 	 * @param  string $baseroute Base route for all routes in given callback
 	 * @param  callable $callable  Callable to execute
 	 */
-	public function mount($baseroute, $callable)
+	public function mount($baseroute, $callable, $extra = [])
 	{
-
+		$Route = clone $this->Route;
+		$this->Route->setExtra($extra);
 		// Track current baseroute
 		$curBaseroute = $this->baseUri;
 
 		$this->baseUri .= $baseroute;
+
 		// Call the callable
 		call_user_func($callable);
+		$this->Route = $Route;
 
 		// Restore original baseroute
 		$this->baseUri = $curBaseroute;
-
 	}
 
 	/**
