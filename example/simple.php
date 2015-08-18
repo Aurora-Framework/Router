@@ -6,22 +6,35 @@ include "../vendor/autoload.php";
 /**
  * Start router
  */
-$Router = new Aurora\Router("/home");
+use Aurora\Router;
+use Aurora\Helper\Url;
+use Aurora\Router\Route;
 
-$Router->get('/', 'HomeController@index');
-$Router->get('/?{name}', 'HomeController@index');
+$Route = new Route($baseUri);
+$Route->setNamespace("App\Controller\\");
+$Router = new Router("/home", $Route);
+//
+// $Router->get('/{presenter}/{action}/{parameters?}', null, [
+//     "before" => function($Route) {
+//         return $Route;
+//     },
+//     "after" => function($Route) {
+//         return $Route;
+//     },
+// ])->where(["parameters" => "(.*)"]);
 
-$Router->addRoute("GET", '/user/{id}/?{name}', 'UserController@show', "getUser", [
-   "id" => "([0-9]++)",
-   "name" => "alnum"
-]);
+$Router->get('/{id}', 'HomeController@index', ["name" => "profile"])
+    ->where(["id" => "(@[0-9A-Za-z]++)"]);
+//
+$Router->get('/user/{id}', 'UserController@show');
+// $Router->post('/user/{id}', 'UserController@save');
+//
+// $Router->get('/user/{id}/{name?}', 'UserController@show');
+// $Router->get('/user/{id}/messages/{id}', 'UserController@show');
+// $Router->get('/user/{id}/messages/delete/{id}', 'UserController@show');
 
-$Router->addRoute("GET", '/user/messages/{id}/?{toId}', 'UserController@show', "getMessage");
+// $Router->findRoute('GET', '/home/profile/Tom/dasdasd/dsaads/sdfasdf');
+var_dump($Router->findRoute('GET', '/home/@John/'));
 
-
-var_dump($Router->findRoute('GET', '/home/'));
-/*
-$UrlHelper = new UrlHelper($routes);
-$UrlHelper->get("getUser", ["user" => 3]); #/user/3
-$UrlHelper->get("getMessage", ["id" => 3]);
-*/
+$UrlHelper = new Url($Router);
+echo $UrlHelper->get("profile", ["id" => "@John"]); #/user/3

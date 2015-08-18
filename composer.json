@@ -1,23 +1,28 @@
 {
-   "name": "aurora-framework/router",
-   "description": "Minimal Router",
-   "license": "MIT",
-   "authors": [
-      {
-         "name": "VeeeneX",
-         "email": "veeenex@gmail.com"
-      },
-      {
-         "name": "KotassMan",
-         "email": "kotas.koterba@hotmail.sk"
-      }
-   ],
-   "require": {
-      "php": ">=5.6"
-   },
-   "autoload": {
-      "psr-4": {
-         "Aurora\\": "src//"
-      }
-   }
+    "name": "aurora-framework/router",
+    "description": "Minimal Router",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "VeeeneX",
+            "email": "veeenex@gmail.com"
+        },
+        {
+            "name": "KotassMan",
+            "email": "kotas.koterba@hotmail.sk"
+        }
+    ],
+    "require": {
+        "php": ">=5.6",
+        "aurora-framework/helper": "~1.0"
+    },
+    "require-dev": {
+        "php": ">=5.6",
+        "aurora-framework/helper": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Aurora\\": "src//"
+        }
+    }
 }

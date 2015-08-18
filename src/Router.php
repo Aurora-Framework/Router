@@ -27,6 +27,7 @@ use Aurora\Router\Exception\InvalidMethodException;
 use Aurora\Router\Exception\MethodNotAllowedException;
 use Aurora\Router\Exception\RouteNotFoundException;
 use Aurora\Router\Exception\MatchTypeNotFoundException;
+use Aurora\Router\Route;
 
 class Router
 {
@@ -35,6 +36,10 @@ class Router
 	 * @var string
 	 */
 	public $baseUri = "/";
+
+	protected $Route;
+
+	protected $routes;
 
 	/**
 	 * CaseSensitive?
@@ -58,12 +63,12 @@ class Router
 	 * Searches used to search match type
 	 * @var array
 	 */
-	protected $matchTypes = [
-		'any' => "([^\/]++)",
-		'num' => "([0-9]++)",
-		'int' => "([0-9]++)",
-		'all' => "(.*)",
-		'alphanum' => "([0-9A-Za-z]++)",
+	public $matchTypes = [
+		"any"      => "([^\/]++)",
+		"num"      => "([0-9]++)",
+		"int"      => "([0-9]++)",
+		"all"      => "(.*)",
+		"alphanum" => "([0-9A-Za-z]++)",
 	];
 
 	/**
@@ -71,14 +76,14 @@ class Router
 	 *
 	 * @var array
 	 */
-	private $rawRoutes = [];
+	public $rawRoutes = [];
 
 	/**
 	 * Tree of all routes
 	 *
 	 * @var array
 	 */
-	private $routesTree = null;
+	public $routesTree = null;
 
 	/**
 	 * List of allowed Methods
@@ -86,13 +91,13 @@ class Router
 	 * @var array
 	 */
 	private $allowedMethods = [
-		'GET' => true,
-		'POST' => true,
-		'PUT' => true,
-		'PATCH' => true,
-		'OPTIONS' => true,
-		'DELETE' => true,
-		'ANY' => true
+		"GET"     => true,
+		"POST"    => true,
+		"PUT"     => true,
+		"PATCH"   => true,
+		"OPTIONS" => true,
+		"DELETE"  => true,
+		"ANY"     => true
 	];
 
 	/**
@@ -100,9 +105,10 @@ class Router
 	 * @param string $method  Request method
 	 * @param string $baseUri Base uri
 	 */
-	public function __construct($baseUri = "/")
+	public function __construct($baseUri = "/", Route $Route = null)
 	{
 		$this->baseUri = (string) $baseUri;
+		$this->Route = ($Route === null) ? new Route($baseUri) : $Route;
 	}
 
 	/**
@@ -153,9 +159,9 @@ class Router
 	 * @param  string $pattern  Patter used to match the route
 	 * @param  array|callable $callable Callable for route
 	 */
-	public function get($pattern, $callable, $name = null)
+	public function get($pattern, $callable = null, $extra = [])
 	{
-		$this->addRoute("GET", $pattern, $callable, $name);
+		return $this->addRoute("GET", $pattern, $callable, $extra);
 	}
 
 	/**
@@ -163,9 +169,9 @@ class Router
 	 * @param  string $pattern  Patter used to match the route
 	 * @param  array|callable $callable Callable for route
 	 */
-	public function post($pattern, $callable, $name = null)
+	public function post($pattern, $callable = null, $extra = [])
 	{
-		$this->addRoute('POST', $pattern, $callable, $name);
+		$this->addRoute("POST", $pattern, $callable, $extra);
 	}
 
 	/**
@@ -173,9 +179,9 @@ class Router
 	 * @param  string $pattern  Patter used to match the route
 	 * @param  array|callable $callable Callable for route
 	 */
-	public function patch($pattern, $callable, $name = null)
+	public function patch($pattern, $callable = null, $extra = [])
 	{
-		$this->addRoute('PATCH', $pattern, $callable, $name);
+		$this->addRoute("PATCH", $pattern, $callable, $extra);
 	}
 
 	/**
@@ -183,9 +189,9 @@ class Router
 	 * @param  string $pattern  Patter used to match the route
 	 * @param  array|callable $callable Callable for route
 	 */
-	public function delete($pattern, $callable, $name = null)
+	public function delete($pattern, $callable = null, $extra = [])
 	{
-		$this->addRoute('DELETE', $pattern, $callable, $name);
+		$this->addRoute("DELETE", $pattern, $callable, $extra);
 	}
 
 	/**
@@ -193,9 +199,9 @@ class Router
 	 * @param  string $pattern  Patter used to match the route
 	 * @param  array|callable $callable Callable for route
 	 */
-	public function put($pattern, $callable, $name = null)
+	public function put($pattern, $callable = null, $extra = [])
 	{
-		$this->addRoute('PUT', $pattern, $callable, $name);
+		$this->addRoute("PUT", $pattern, $callable, $extra);
 	}
 
 	/**
@@ -203,9 +209,9 @@ class Router
 	 * @param  string $pattern  Patter used to match the route
 	 * @param  array|callable $callable Callable for route
 	 */
-	public function options($pattern, $callable, $name = null)
+	public function options($pattern, $callable = null, $extra = [])
 	{
-		$this->addRoute('OPTIONS', $pattern, $callable, $name);
+		$this->addRoute("OPTIONS", $pattern, $callable, $extra);
 	}
 
 	/**
@@ -213,9 +219,9 @@ class Router
 	 * @param  string $pattern  Patter used to match the route
 	 * @param  array|callable $callable Callable for route
 	 */
-	public function any($pattern, $callable, $name = null)
+	public function any($pattern, $callable = null, $extra = [])
 	{
-		$this->addRoute('ANY', $pattern, $callable, $name);
+		$this->addRoute("ANY", $pattern, $callable, $extra);
 	}
 
 	/**
@@ -244,11 +250,11 @@ class Router
 	 */
 	public function findRequestMethod()
 	{
-		$method = $_SERVER['REQUEST_METHOD'];
+		$method = $_SERVER["REQUEST_METHOD"];
 
-		if ($method == 'POST') {
-			if (isset($_SERVER['X-HTTP-Method-Override'])) {
-				$method = getenv('X-HTTP-Method-Override');
+		if ($method === "POST") {
+			if (isset($_SERVER["X-HTTP-Method-Override"])) {
+				$method = $_SERVER["X-HTTP-Method-Override"];
 			}
 		}
 
@@ -287,7 +293,7 @@ class Router
 	 */
 	public function findUri()
 	{
-		$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+		$uri = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 
 		return ($this->lowerCase) ? strtolower($uri) : $uri;
 	}
@@ -301,40 +307,48 @@ class Router
 	 * @param $action
 	 * @throws InvalidMethodException
 	 */
-	public function addRoute($method, $route, $action, $name = null, $definitions = null)
+	public function addRoute($method, $route, $action, $extra = [])
 	{
-		if ('ANY' === $method) {
-			$methods = [
-				'GET' => $action,
-				'POST' => $action,
-				'PUT' => $action
-			];
+		$name = (isset($extra["name"])) ? $extra["name"] : $route;
+
+		if (isset($this->rawRoutes[$name])) {
+			$Route = $this->rawRoutes[$name];
+		} else {
+			$Route              = clone $this->Route;
+			$Route->route       = $this->baseUri.$route;
+			$Route->name 		= $name;
+		}
+
+		$Route->addExtra($extra);
+		$methods = [];
+		if ("ANY" === $method) {
+			$methods["GET"]  = $action;
+			$methods["POST"] =& $methods["GET"];
+			$methods["PUT"]  =& $methods["GET"];
+
+			$Route->methods = $methods;
+			$Route->action = $action;
+
+			$this->rawRoutes[$name] = $Route;
 		} else {
 
-			$methods = (array) $method;
-			$count = count($methods);
+			$arrayedMethod = (array) $method;
+			$count = count($arrayedMethod);
 
 			for ($i = 0; $i < $count; $i++) {
-				if (!isset($this->allowedMethods[$methods[$i]])) {
-					throw new InvalidMethodException('Method: ' . $methods[$i] . ' is not valid');
+				if (!isset($this->allowedMethods[$arrayedMethod[$i]])) {
+					throw new InvalidMethodException("Method: " . $arrayedMethod[$i] . " is not valid");
 				}
-				$methods[$methods[$i]] = $action;
+				$method = $arrayedMethod[$i];
+				$Route->action = $action;
+				$Route->method = $method;
+				$Route->name = $name;
+				$this->rawRoutes[$name] = $Route;
 			}
 		}
-		if ($name === null) {
-			$this->rawRoutes[] = [
-				'route' => $this->baseUri.$route,
-				'method' => $methods,
-				"definitions" => $definitions
-			];
-		} else {
-			$this->rawRoutes[$name] = [
-				'route' => $this->baseUri.$route,
-				'method' => $methods,
-				"definitions" => $definitions
-			];
-		}
 
+
+		return $Route;
 	}
 
 	/**
@@ -348,68 +362,99 @@ class Router
 	 */
 	public function findRoute($method, $uri)
 	{
+		$this->method = $method;
 		if ($this->routesTree === null) {
 			$this->routesTree = $this->parseRoutes($this->rawRoutes);
 		}
 
 		$search = $this->normalize($uri);
 
-		$node = $this->routesTree;
+		$node   = $this->routesTree;
 		$params = [];
+
 		//loop every segment in request url, compare it, collect parameters names and values
-		foreach ($search as $v) {
+		foreach ($search as $key => $v) {
 
-			if (isset($node[$v['use']])) {
-				$node = $node[$v['use']];
-
-			} elseif (isset($node['*'])) {
+			if (isset($node[$v["use"]])) {
+				$node = $node[$v["use"]];
+			} else if (isset($node["*"])) {
 
 				$subnode = $node["*"];
-				if (isset($node["definitions"])) {
+				if (($definitions = $this->rawRoutes[$subnode["routeName"]]["definitions"]) !== null) {
+					if (isset($definitions[$subnode["name"]])) {
+						$definition = $definitions[$subnode["name"]];
+						$regex = ($definition[0] === "(") ? $definition : $this->getMatchType($definition, "(.*)");
 
-					if (isset($node["definitions"][$subnode['name']])) {
-
-						$regex = ($node["definitions"][$subnode['name']][0] === "(") ? $node["definitions"][$subnode['name']] : $this->getMatchType($node["definitions"][$subnode['name']], "all");
-
-						if (!preg_match($regex, $v['name'])) {
-							throw new RouteNotFoundException('Route for uri: ' . $uri . ' was not found');
+						if ($regex === "(.*)") {
+							break;
+						} else {
+							if (!preg_match($regex, $v['name'])) {
+								throw new RouteNotFoundException("Route for uri: {$uri} was not found");
+							}
 						}
 					}
+				}
+				// This sets node to continue
+				$node = $subnode;
+				$params[$subnode["name"]] = $v["name"];
 
-					$params[$subnode['name']] = $v['name'];
-				} else {
-					$params[$subnode['name']] = $v['name'];
+			} else if (isset($node["?"])) {
+				$node = $node["?"];
+
+				if (($definitions = $this->rawRoutes[$method][$node["routeName"]]["definitions"]) !== null) {
+					if (isset($definitions[$node["name"]])) {
+						$definition = $definitions[$node["name"]];
+						$regex = ($definition[0] === "(") ? $definition : $this->getMatchType($definition, "any");
+
+						if ($regex === "(.*)") {
+							$c = count($search);
+							for ($i=$key; $i < $c; $i++) {
+								$b[] = $search[$i]["use"];
+							}
+							$params[$node["name"]] = $b;
+							break;
+						} else {
+							if (!preg_match($regex, $v['name'])) {
+								continue;
+							}
+							$node = $node["?"];
+							$params[$node["name"]] = $v["name"];
+						}
+					}
 				}
 
-				$node = $subnode;
-
-			} elseif (isset($node['?'])) {
-				$node = $node['?'];
-				$params[$node['name']] = $v['name'];
-
+				$params[$node["name"]] = $v["name"];
 			} else {
-				throw new RouteNotFoundException('Route for uri: ' . $uri . ' was not found');
+				throw new RouteNotFoundException("Route for uri: {$uri} was not found");
 			}
-		}
-		//check for route with optional parameters that are not in request url until valid action is found
-		while (!isset($node['exec']) && isset($node['?'])) {
-			$node = $node['?'];
+
 		}
 
-		if (isset($node['exec'])) {
-			if (!isset($node['exec']['method'][$method])
-				&& !isset($node['exec']['method']['any'])
-			) {
-				throw new MethodNotAllowedException('Method: ' . $method . ' is not allowed for this route');
-			}
-			return [
-				'route' => $node['exec']['route'],
-				'method' => $method,
-				'action' => $node['exec']['method'][$method],
-				'params' => $params
-			];
+		// Check for route with optional parameters that are not in request url until valid action is found
+		// This make tree to go to last key
+		while (!isset($node["exec"]) && isset($node["?"])) {
+			$node = $node["?"];
 		}
-		throw new RouteNotFoundException('Route for uri: ' . $uri . ' was not found');
+
+		if (isset($node["exec"])) {
+			if (!isset($node["exec"]["method"][$method])
+				&& !isset($node["exec"]["method"]["any"])
+			) {
+				throw new MethodNotAllowedException("Method: {$method} is not allowed for this route");
+			}
+
+			$Route = $node["exec"]["method"][$method];
+			$Route->params = $params;
+			if ($a = is_array($Route->action) || is_string($Route->action)) {
+				if ($a) {
+					$Route->action = [$Route->namespace.$Route->action[0], $Route->action[1]];
+				} else {
+					$Route->action = $Route->namespace.$Route->action;
+				}
+			}
+			return $Route;
+		}
+		throw new RouteNotFoundException("Route for uri: {$uri} was not found");
 	}
 
 	/**
@@ -417,7 +462,7 @@ class Router
 	 * returns default value.
 	 *
 	 * @method getMatchType
-	 * @throws MatchTypeNotFoundExeption If regex of type wasn't found
+	 * @throws MatchTypeNotFoundExeption If regex of type wasn"t found
 	 *
 	 * @param  string       $type    Type of allowed regex
 	 * @param  string       $default Default return value if type is not found
@@ -441,9 +486,10 @@ class Router
 	 */
 	public function dump()
 	{
-		if ($this->routesTree == null) {
+		if ($this->routesTree === null) {
 			$this->routesTree = $this->parseRoutes($this->rawRoutes);
 		}
+
 		return $this->routesTree;
 	}
 
@@ -463,43 +509,42 @@ class Router
 	 * @param $route
 	 * @return array
 	 */
-	protected function normalize($route)
+	public function normalize($route)
 	{
 		//make sure that all urls have the same structure
-		/*if ($route[0] !== '/') {
-			$route = '/' . $route;
-		}*/
-
 		/* Fix trailling shash */
-		if (mb_substr($route, -1, 1) == '/') {
+		if (mb_substr($route, -1, 1) == "/") {
 			$route = substr($route, 0, -1);
 		}
 
-		$result = explode('/', $route);
+		$result    = explode("/", $route);
 		$result[0] = $this->baseUri;
-		$ret = [];
+		$ret       = [];
+
 		//check for dynamic and optional parameters
 		foreach ($result as $v) {
+
 			if (!$v) {
 				continue;
 			}
-			if ($v[0] === "?") {
+			if (($v[0]) === "?{") {
 				$ret[] = [
-					'name' => explode('}', mb_substr($v, 2))[0],
-					'use' => '?'
+					"name" => explode("?}", mb_substr($v, 1))[0],
+					"use"  => "?"
 				];
-			} elseif (($v[0]) === '{') {
+			} else if (($v[0]) === "{") {
 				$ret[] = [
-					'name' => explode('}', mb_substr($v, 1))[0],
-					'use' => "*"
+					"name" => explode("}", mb_substr($v, 1))[0],
+					"use"  => "*"
 				];
 			} else {
 				$ret[] = [
-					'name' => $v,
-					'use' => $v
+					"name" => $v,
+					"use"  => $v
 				];
 			}
 		}
+
 		return $ret;
 	}
 
@@ -513,30 +558,25 @@ class Router
 	{
 		$tree = [];
 
-		foreach ($routes as $route) {
+		foreach ($routes as $Route) {
 			$node = &$tree;
+			$routeSegments = $this->normalize($Route->route);
 
-			$definitions = $route['definitions'];
-			unset($route['definitions']);
-
-			foreach ($this->normalize($route['route']) as $segment) {
-				if (!isset($node[$segment['use']])) {
-					$node[$segment['use']] = ['name' => $segment['name']];
+			foreach ($routeSegments as $segment) {
+				if (!isset($node[$segment["use"]])) {
+					$node[$segment["use"]] = [
+						"name" => $segment["name"],
+						"routeName" => $Route->name
+					];
 				}
-				$node['definitions'] = $definitions;
-				$node = &$node[$segment['use']];
+				$node = &$node[$segment["use"]];
 			}
-
-
+			$Route->segments = $routeSegments;
 			//node exec can exists only if a route is already added.
 			//This happens when a route is added more than once with different methods.
-			if (isset($node['exec'])) {
-				$node['exec']['method'] = array_merge($node['exec']['method'], $route['method']);
-			} else {
-				$node['exec'] = $route;
-			}
-			$node['name'] = $segment['name'];
+			$node["exec"]["method"][$Route->method] = $Route;
 		}
+
 		return $tree;
 	}
 
